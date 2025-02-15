@@ -1,0 +1,469 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.toolbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    background-color: rgba(240, 240, 240, 0.95);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    z-index: 9999;
+    pointer-events: auto;
+    transform: translateY(0);
+    justify-content: flex-start;
+    padding-left: 20px;
+}
+
+.toolbar.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.toolbar.hidden {
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+.runtime-mode .toolbar {
+    height: 40px;
+    background-color: rgba(240, 240, 240, 0.9);
+    transform: translateY(100%);  /* Hide by default in runtime mode */
+}
+
+/* Add buffer zone above the toolbar */
+.buffer-zone {
+    position: fixed;
+    bottom: 50px; /* Height of the toolbar */
+    left: 0;
+    right: 0;
+    height: 40px; /* Height of the buffer zone */
+    z-index: 9998; /* Just below the toolbar */
+    pointer-events: none; /* Allow mouse events to pass through */
+}
+
+.runtime-mode .buffer-zone {
+    display: block; /* Ensure buffer zone is visible in run mode */
+}
+
+/* Remove all other toolbar-related styles */
+
+.toolbar button {
+    padding: 5px 10px;
+    margin-right: 5px;
+}
+
+.editor-buttons, .runtime-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.runtime-buttons {
+    display: none; /* Hide runtime buttons by default */
+}
+
+.runtime-buttons.hidden,
+.editor-buttons.hidden {
+    display: none;
+}
+
+.runtime-mode .editor-buttons {
+    display: none; /* Hide editor buttons in runtime mode */
+}
+
+.runtime-mode .runtime-buttons {
+    display: none; /* Hide the old runtime buttons */
+}
+
+.runtime-mode .runtime-buttons:hover {
+    opacity: 1;
+}
+
+.runtime-mode .runtime-buttons button {
+    background-color: rgba(240, 240, 240, 0.8);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.static-runtime-button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(240, 240, 240, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 9999;
+    display: none; /* Hidden by default */
+}
+
+.runtime-mode .static-runtime-button {
+    display: block; /* Show in runtime mode */
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    padding-bottom: 10px;
+    overflow: hidden;
+}
+
+#editor {
+    width: 50%;
+    height: 100%;
+    resize: none;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 14px;
+    border: 1px solid #ccc;
+}
+
+#preview {
+    width: 50%;
+    height: 100%;
+    border: 1px solid #ccc;
+    background-color: white;
+    flex: 1;
+    transition: flex 0.3s ease;
+}
+
+#editor.full-width {
+    width: 100%;
+}
+
+#preview.hidden {
+    display: none;
+    flex: 0;
+    width: 0;
+    padding: 0;
+    margin: 0;
+    border: none;
+}
+
+/* Add styles for fullscreen */
+body.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    background: white;
+}
+
+body.fullscreen .container {
+    padding: 0;
+}
+
+body.fullscreen #editor,
+body.fullscreen #preview {
+    border: none;
+}
+
+/* CodeMirror Styles */
+.CodeMirror {
+    height: 100%;
+    font-family: monospace;
+    font-size: 16px;
+    line-height: 1.6;
+    padding: 0;
+    background: #272822;
+    color: #f8f8f2;
+}
+
+.CodeMirror-lines {
+    padding: 4px 0;
+    cursor: text;
+}
+
+.CodeMirror pre.CodeMirror-line,
+.CodeMirror pre.CodeMirror-line-like {
+    padding: 0 4px;
+}
+
+/* Add scrollbar styling */
+.CodeMirror-scrollbar-filler {
+    background-color: transparent;
+}
+
+.CodeMirror-simplescroll-horizontal div,
+.CodeMirror-simplescroll-vertical div {
+    background: #666;
+    border-radius: 10px;
+}
+
+/* Make sure editor takes proper space */
+.CodeMirror-wrap {
+    max-height: 100%;
+    overflow-y: auto !important;
+}
+
+/* Fix editor sizing */
+#editor, .CodeMirror {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    transition: flex 0.3s ease;
+    height: 100%;
+}
+
+/* Remove conflicting styles */
+.CodeMirror pre.CodeMirror-line,
+.CodeMirror pre.CodeMirror-line-like {
+    padding: 0 4px;
+}
+
+/* Ensure proper cursor */
+.CodeMirror-cursor {
+    border-left: 1px solid #f8f8f2 !important;
+}
+
+.preview-hidden #editor,
+.preview-hidden .CodeMirror {
+    flex: 1;
+}
+
+#editor.full-width, 
+.CodeMirror.full-width {
+    max-width: 100%;
+    min-width: 100%;
+}
+
+/* Suggestions box styling */
+.CodeMirror-hints {
+    position: absolute;
+    z-index: 10;
+    overflow: hidden;
+    list-style: none;
+    margin: 0;
+    padding: 2px;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    background: white;
+    font-size: 14px;
+    font-family: monospace;
+    max-height: 20em;
+    overflow-y: auto;
+    box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+}
+
+.CodeMirror-hint {
+    margin: 0;
+    padding: 4px 6px;
+    white-space: pre;
+    color: black;
+    cursor: pointer;
+}
+
+li.CodeMirror-hint-active {
+    background: #08f;
+    color: white;
+}
+
+/* Fix line numbers styles */
+.CodeMirror-linenumbers {
+    padding: 0 8px;
+}
+
+.CodeMirror-linenumber {
+    color: #90908a;
+    padding: 0 5px;
+    min-width: 20px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.CodeMirror-gutters {
+    border-right: 1px solid #464646;
+    background-color: #272822;
+    padding-right: 5px;
+    white-space: nowrap;
+    height: 100%;
+}
+
+/* Add styles for the runtime mode */
+.runtime-mode .editor-toolbar,
+.runtime-mode #editor,
+.runtime-mode .CodeMirror {
+    display: none;
+}
+
+.runtime-mode #preview {
+    width: 100%;
+    border: none;
+}
+
+.runtime-mode .container {
+    padding: 0;
+}
+
+/* Update toolbar styles to ensure visibility in runtime mode */
+.toolbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    background-color: rgba(240, 240, 240, 0.95);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    z-index: 9999;
+    transform: translateY(0);
+    justify-content: flex-start; /* Align items to the left */
+    padding-left: 20px; /* Add some padding from the left edge */
+}
+
+/* Remove these conflicting styles */
+/* Remove old toolbar styles */
+.editor-toolbar, .runtime-toolbar {
+    display: none;
+}
+
+/* Remove old runtime buttons styles */
+.runtime-buttons, .runtime-mode .runtime-buttons {
+    display: none;
+}
+
+/* Remove these button-related styles */
+/* Remove old runtime buttons styles */
+.runtime-buttons, .runtime-mode .runtime-buttons,
+#back-button, .runtime-mode #back-button {
+    display: none;
+}
+
+/* Add new always-visible back button style */
+#back-button {
+    position: fixed;
+    bottom: 10px; /* Changed from top to bottom */
+    left: 10px;   /* Changed from right to left */
+    background-color: rgba(240, 240, 240, 0.6); /* More transparent background */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    z-index: 9999;
+    display: none;
+    opacity: 0.3; /* Reduced opacity */
+    transition: opacity 0.2s ease;
+}
+
+#back-button:hover {
+    opacity: 1; /* Full opacity on hover */
+}
+
+.runtime-mode #back-button {
+    display: block; /* Only show in runtime mode */
+}
+
+/* Update runtime buttons visibility */
+.runtime-mode .runtime-buttons {
+    display: flex;
+    left: 10px;
+    right: auto;
+    top: 10px;
+    display: flex;
+    opacity: 0.3;
+    transition: opacity 0.2s ease;
+}
+
+.runtime-mode .editor-buttons {
+    display: none;
+}
+
+/* Add toolbar trigger */
+.toolbar-trigger {
+    position: fixed;
+    bottom: 50px;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    z-index: 9998;
+    background-color: transparent; /* Make it invisible but interactive */
+}
+
+.runtime-mode .toolbar-trigger {
+    display: block; /* Only show in runtime mode */
+    height: 40px; /* Increase trigger area */
+}
+
+.runtime-toolbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 10px;
+    background-color: rgba(240, 240, 240, 0.95);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    z-index: 9999;
+    transform: translateY(0);
+    justify-content: flex-start;
+    padding-left: 20px;
+}
+
+.runtime-toolbar.visible {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.runtime-toolbar.hidden {
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+.runtime-toolbar-trigger {
+    position: fixed;
+    bottom: 40px;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    background-color: transparent;
+    z-index: 9998;
+}
+
+.runtime-mode .runtime-toolbar-trigger {
+    display: block;
+}
+
+.runtime-fullscreen #preview {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10000;
+    background: white;
+}
+
+.runtime-fullscreen .runtime-toolbar {
+    z-index: 10001;
+}

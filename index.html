@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Editor</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <textarea id="editor" spellcheck="false" placeholder="Enter HTML code here..."></textarea>
+        <iframe id="preview"></iframe>
+    </div>
+    <div class="toolbar-trigger"></div>
+    <div class="buffer-zone"></div>
+    <div class="toolbar hidden" data-toolbar="editor">
+        <div class="editor-buttons">
+            <button onclick="saveContent()" data-action="save">Save</button>
+            <button onclick="loadContent()" data-action="load">Load</button>
+            <button onclick="clearEditor()" data-action="clear">Clear</button>
+            <button onclick="toggleFullscreen()" class="fullscreen-btn" data-action="fullscreen">Fullscreen</button>
+            <button onclick="togglePreview()" data-action="preview">Toggle Preview</button>
+            <button onclick="runCode()" class="run-btn" data-action="run">Run</button>
+        </div>
+        <div class="runtime-buttons hidden">
+            <button onclick="exitRunMode()">Back to Editor</button>
+        </div>
+    </div>
+    <div class="runtime-toolbar-trigger"></div>
+    <div class="runtime-toolbar hidden">
+        <div class="runtime-buttons">
+            <button onclick="exitRunMode()">Back to Editor</button>
+            <button onclick="toggleRuntimeFullscreen()">Fullscreen</button>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/xml-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/html-hint.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closetags.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/edit/closebrackets.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
